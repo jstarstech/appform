@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="">
+
+<head>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@mdi/font@6.x/css/materialdesignicons.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+    <title></title>
+</head>
+
+<body>
+<div id="app">
+    <v-app id="inspire">
+        <v-app-bar app shrink-on-scroll>
+            <v-app-bar-nav-icon></v-app-bar-nav-icon>
+
+            <v-toolbar-title>Forms demo</v-toolbar-title>
+
+            <v-spacer></v-spacer>
+
+            <v-btn icon>
+                <v-icon>mdi-dots-vertical</v-icon>
+            </v-btn>
+        </v-app-bar>
+
+        <v-main>
+            <v-container>
+                <v-row no-gutters>
+                    <v-col md="4" offset-md="4">
+                        <v-card  v-if="this.userData.authUser === false && this.userData.authUser === false" class="pa-5" outlined tile>
+                            <form>
+                                <template v-if="userData.authDB === false">
+                                    <v-text-field v-model="db_login" :error-messages="nameErrors" :counter="10"
+                                                  label="Database Login" required @input="$v.db_login.$touch()"
+                                                  @blur="$v.db_login.$touch()"></v-text-field>
+                                    <v-text-field v-model="email" :error-messages="emailErrors"
+                                                  label="Database Password" required @input="$v.email.$touch()"
+                                                  @blur="$v.email.$touch()"></v-text-field>
+                                    <v-checkbox v-model="checkbox" :error-messages="checkboxErrors" label="Remember Me"
+                                                required @change="$v.checkbox.$touch()" @blur="$v.checkbox.$touch()">
+                                    </v-checkbox>
+
+                                    <v-btn class="mr-4" @click="loginToDb">
+                                        Login DB
+                                    </v-btn>
+                                    <br/>
+                                    <br/>
+                                </template>
+
+                                <template v-if="this.userData.authUser === false">
+                                    <v-text-field v-model="username" :error-messages="nameErrors" :counter="10"
+                                                  label="Database Login" required @input="$v.db_login.$touch()"
+                                                  @blur="$v.db_login.$touch()"></v-text-field>
+                                    <v-text-field v-model="email" :error-messages="emailErrors"
+                                                  label="Database Password" required @input="$v.email.$touch()"
+                                                  @blur="$v.email.$touch()"></v-text-field>
+                                    <v-btn class="mr-4" @click="loginUser">
+                                        Login
+                                    </v-btn>
+                                </template>
+
+                            </form>
+                        </v-card>
+
+                        <template v-if="this.userData.authUser === true && this.userData.authUser === true && this.selectedItem === null">
+                            <v-card
+                                    class="mx-auto"
+                                    width="256"
+                                    tile
+                            >
+                                <v-navigation-drawer permanent>
+                                    <v-list-item>
+                                        <v-list-item-content>
+                                            <v-list-item-title class="text-h6">
+                                                Menu
+                                            </v-list-item-title>
+                                            <v-list-item-subtitle>
+
+                                            </v-list-item-subtitle>
+                                        </v-list-item-content>
+                                    </v-list-item>
+
+                                    <v-divider></v-divider>
+                                    <v-list
+                                            nav
+                                            dense
+                                    >
+                                        <v-list-item-group
+                                                v-model="selectedItem"
+                                                color="primary"
+                                        >
+                                            <v-list-item
+                                                    v-for="(item, i) in items"
+                                                    :key="i"
+                                            >
+                                                <v-list-item-icon>
+                                                    <v-icon v-text="item.icon"></v-icon>
+                                                </v-list-item-icon>
+
+                                                <v-list-item-content>
+                                                    <v-list-item-title v-text="item.text"></v-list-item-title>
+                                                </v-list-item-content>
+                                            </v-list-item>
+                                        </v-list-item-group>
+                                    </v-list>
+                                </v-navigation-drawer>
+                            </v-card>
+
+
+
+                        </template>
+                    </v-col>
+                </v-row>
+                <v-row no-gutters  v-if="this.selectedItem !== null">
+                    <v-col md="6" offset-md="3">
+                        <template v-if="this.selectedItem === 0">
+                            <v-select
+                                    :items="menu0.userAndGroup"
+                                    label="Tache pur"
+                            ></v-select>
+                            <v-select
+                                    :items="menu0.NoDossier"
+                                    label="Properiete"
+                            ></v-select>
+
+                            <v-text-field v-model="menu0.taches"
+                                          label="Taches Login" required></v-text-field>
+
+                            <v-btn class="mr-4" @click="menu0AddData">
+                                Add new
+                            </v-btn>
+                            <v-btn class="mr-4" @click="selectedItem = null">
+                                Close
+                            </v-btn>
+                            <br/>
+                            <br/>
+                        </template>
+                    </v-col>
+                </v-row>
+            </v-container>
+        </v-main>
+    </v-app>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue-router@3.5.3/dist/vue-router.js"></script>
+<script>
+    new Vue({
+        el: '#app',
+        vuetify: new Vuetify(),
+        data: {
+            user_data: {
+                db_login: 'dbuser',
+                db_password: 'password',
+                login: 'user',
+                password: 'password',
+            },
+            db_login: '',
+            db_password: '',
+            remember_me: false,
+            username: '',
+            password: '',
+
+            userData: {
+                authDB: false,
+                authUser: false,
+                login: '',
+            },
+
+            menu0: {
+                userAndGroup: [
+                    'User Test1',
+                    'User Test2',
+                    'User Test3',
+                ],
+                NoDossier: [
+                    'Properte 1',
+                    'Properte 3',
+                    'Properte 2',
+                ],
+                taches: '',
+            },
+
+            selectedItem: null,
+            items: [
+                { text: 'AppAddTache', icon: '' },
+                { text: 'AppAddTache', icon: '' },
+                { text: 'AppTache', icon: '' },
+                { text: 'AppAddTravaux', icon: '' },
+                { text: 'Travaux Cédule', icon: '' },
+                { text: 'AppProp', icon: '' },
+                { text: 'AppLocataire', icon: '' },
+                { text: 'AppAddRV', icon: '' },
+                { text: 'TravauxAssigner', icon: '' },
+                { text: 'TravauxParAdresse', icon: '' },
+            ],
+        },
+        methods: {
+            loginToDb() {
+                this.userData.authDB = true;
+            },
+            loginUser() {
+                this.userData.authUser = true;
+            },
+            menu0AddData() {
+                if (confirm('Vous vous fermer cet écran sans créer de tâche?')) {
+                    this.selectedItem = null;
+                }
+            },
+        }
+    })
+</script>
+</body>
+
+</html>
